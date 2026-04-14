@@ -1,0 +1,128 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
+@import "tailwindcss";
+
+/* ─── Tailwind v4 Theme Tokens ─────────────────────────────────────────────── */
+@theme {
+  /* Redefined Brand Colors - Simple Minimalist E-commerce */
+  /* Re-mapping previously heavy gold/black into clean neutrals to avoid breaking components instantly */
+  --color-brand-gold: #262626; /* Re-mapped to black for a clean look */
+  --color-brand-gold-muted: #565B66; /* Dark gray */
+  --color-brand-black: #262626;
+  --color-brand-dark: #262626;
+  --color-brand-gray: #565B66;
+  --color-off-white: #F3F4F4;
+  
+  --color-primary: #262626;
+  --color-primary-foreground: #FEFEFE;
+  
+  --color-secondary: #F3F4F4;
+  --color-secondary-foreground: #262626;
+
+  --color-background: #FEFEFE;
+  --color-foreground: #262626;
+  
+  --color-muted: #F3F4F4;
+  --color-muted-foreground: #565B66;
+  
+  --color-accent: #FEFEFE;
+  --color-accent-foreground: #262626;
+  
+  --color-border: #E5E7EB;
+  --color-input: #E5E7EB;
+  --color-ring: #262626;
+
+  /* Fonts */
+  --font-heading: "Inter", system-ui, sans-serif;
+  --font-sans: "Inter", system-ui, sans-serif;
+
+  /* Shadows - Minimal and soft */
+  --shadow-premium: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  --shadow-pill: 0 2px 4px rgba(0, 0, 0, 0.02);
+
+  /* Border Radius - Flat and clean */
+  --radius-card: 24px; 
+  --radius-pill: 9999px; /* Minimalist modern pill shape */
+}
+
+/* ─── Global Base ──────────────────────────────────────────────────────────── */
+:root {
+  --background: #FEFEFE;
+  --foreground: #262626;
+  --primary: #262626;
+  --primary-foreground: #FEFEFE;
+  --muted: #F3F4F4;
+  --muted-foreground: #565B66;
+  --accent: #FEFEFE;
+  --accent-foreground: #262626;
+  --border: #E5E7EB;
+  --input: #E5E7EB;
+  --ring: #262626;
+  --radius: 24px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+}
+
+/* ─── Custom Scrollbar - Simple and Invisible unless active ──────────────────────── */
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #E5E7EB;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #9CA3AF;
+}
+
+/* ─── Utilities ───────────────────────────────────────────────────────────── */
+.glass-panel {
+  background: white;
+  border: 1px solid #E5E7EB;
+}
+
+.nordic-card {
+  background: var(--color-background);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  transition: all 0.2s ease;
+}
+
+.nordic-card:hover {
+  border-color: #E5E7EB;
+  box-shadow: var(--shadow-premium);
+}
+
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
