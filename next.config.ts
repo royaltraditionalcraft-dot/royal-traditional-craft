@@ -9,6 +9,8 @@ const nextConfig: NextConfig = {
     ],
   },
   allowedDevOrigins: ["192.168.31.153"],
+  serverExternalPackages: ["@prisma/client", "@neondatabase/serverless"],
+  experimental: {},
 };
 
 export default nextConfig;

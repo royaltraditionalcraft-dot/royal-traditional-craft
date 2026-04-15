@@ -8,9 +8,10 @@ export type {
   Address,
   Banner,
   Review,
-} from "@/generated/prisma/client";
+  Coupon,
+} from "@prisma/client";
 
-export type { Role, OrderStatus, PaymentStatus } from "@/generated/prisma/client";
+export type { Role, OrderStatus, PaymentStatus } from "@prisma/client";
 
 // ─── Cart types ───────────────────────────────────────────────────────────────
 
