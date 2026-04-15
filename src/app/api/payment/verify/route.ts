@@ -2,9 +2,7 @@ import { NextRequest } from "next/server";
 import crypto from "crypto";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
-import { Resend } from "resend";
-
-const resend = new Resend(process.env.RESEND_API_KEY);
+import { getResend } from "@/lib/resend";
 
 export async function POST(req: NextRequest) {
   try {
@@ -69,7 +67,7 @@ export async function POST(req: NextRequest) {
 
     // ── 4. Send confirmation email via Resend ────────────────────────
     try {
-      await resend.emails.send({
+      await getResend().emails.send({
         from: "Royaltraditionalcraft <orders@royaltraditionalcraft.in>",
         to: session.user.email!,
         subject: `Order Confirmed — #${order.id.slice(-10).toUpperCase()}`,
