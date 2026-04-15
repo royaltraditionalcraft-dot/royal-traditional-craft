@@ -122,16 +122,16 @@ export function Navbar({ session }: NavbarProps) {
                   <User className="size-5 shadow-sm" />
                 </Button>
                 {(session.user as any).role === "ADMIN" && (
-                  <Button 
-                    render={<Link href="/admin" />} 
-                    nativeButton={false} 
-                    variant="ghost" 
-                    size="icon" 
-                    className="hover:bg-off-white rounded-full text-foreground h-9 w-9" 
-                    title="Dashboard"
-                  >
-                    <Store className="size-5" />
-                  </Button>
+                  <Link href="/admin">
+                    <Button 
+                      variant="ghost" 
+                      size="icon" 
+                      className="hover:bg-off-white rounded-full text-foreground h-9 w-9" 
+                      title="Admin Panel"
+                    >
+                      <Store className="size-5" />
+                    </Button>
+                  </Link>
                 )}
                 <Button 
                   variant="ghost" 
@@ -194,6 +194,9 @@ export function Navbar({ session }: NavbarProps) {
                   {session ? (
                     <>
                       <Link href="/orders" className="text-2xl font-medium tracking-tight">Order History</Link>
+                      {(session.user as any).role === "ADMIN" && (
+                        <Link href="/admin" className="text-2xl font-medium tracking-tight text-foreground">Admin Panel</Link>
+                      )}
                       <button onClick={() => signOut({ callbackUrl: "/" })} className="text-2xl font-medium tracking-tight text-red-500 text-left">Sign Out</button>
                     </>
                   ) : (
