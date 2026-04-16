@@ -193,11 +193,12 @@ export function Navbar({ session }: NavbarProps) {
                   <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Account</p>
                   {session ? (
                     <>
+                      <Link href="/profile" className="text-2xl font-medium tracking-tight">My Profile</Link>
                       <Link href="/orders" className="text-2xl font-medium tracking-tight">Order History</Link>
                       {(session.user as any).role === "ADMIN" && (
                         <Link href="/admin" className="text-2xl font-medium tracking-tight text-foreground">Admin Panel</Link>
                       )}
-                      <button onClick={() => signOut({ callbackUrl: "/" })} className="text-2xl font-medium tracking-tight text-red-500 text-left">Sign Out</button>
+                      <button onClick={() => signOut({ callbackUrl: "/" })} className="text-2xl font-medium tracking-tight text-red-500 text-left transition-colors hover:text-red-600">Sign Out</button>
                     </>
                   ) : (
                     <Link href="/login" className="text-2xl font-medium tracking-tight hover:text-foreground/80 transition-colors">Sign In</Link>
