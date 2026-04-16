@@ -111,16 +111,16 @@ export function Navbar({ session }: NavbarProps) {
           <div className="hidden sm:flex items-center gap-2">
             {session ? (
               <div className="flex items-center gap-1">
-                <Button 
-                  render={<Link href="/profile" />} 
-                  nativeButton={false} 
-                  variant="ghost" 
-                  size="icon" 
-                  className="hover:bg-off-white rounded-full h-9 w-9" 
-                  title="My Profile"
-                >
-                  <User className="size-5 shadow-sm" />
-                </Button>
+                <Link href="/profile">
+                  <Button 
+                    variant="ghost" 
+                    size="icon" 
+                    className="hover:bg-off-white rounded-full h-9 w-9" 
+                    title="My Profile"
+                  >
+                    <User className="size-5 shadow-sm" />
+                  </Button>
+                </Link>
                 {(session.user as any).role === "ADMIN" && (
                   <Link href="/admin">
                     <Button 
