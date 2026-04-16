@@ -11,6 +11,7 @@ declare module "next-auth" {
     user: {
       id: string;
       role: string;
+      createdAt: string;
     } & DefaultSession["user"];
   }
 }
@@ -51,7 +52,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           name: user.name,
           email: user.email,
           image: user.image,
-          role: user.role, // Pass role here
+          role: user.role,
+          createdAt: user.createdAt.toISOString(),
         };
       },
     },
@@ -59,9 +61,9 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   callbacks: {
     ...authConfig.callbacks,
     async jwt({ token, user, trigger, session }) {
-      if (user) {
         token.id = user.id;
         token.role = (user as any).role || "USER";
+        token.createdAt = (user as any).createdAt;
       }
       
       if (trigger === "update" && session?.role) {
@@ -74,6 +76,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       if (session.user && token) {
         session.user.id = token.id as string;
         session.user.role = token.role as string;
+        session.user.createdAt = token.createdAt as string;
       }
       return session;
     },
