@@ -9,16 +9,40 @@ import { AdminRevenueChart } from "./AdminRevenueChart";
 
 export const metadata: Metadata = { title: "Admin | SHOP." };
 
+async function getDashboardStats() {
+  try {
+    const [customersRes, productsRes, ordersRes] = await Promise.all([
+      fetch(`${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/api/admin/customers?limit=1`, { cache: 'no-store' }),
+      fetch(`${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/api/admin/products?limit=1`, { cache: 'no-store' }),
+      fetch(`${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/api/admin/orders?limit=1`, { cache: 'no-store' }),
+    ]);
+
+    const customersData = customersRes.ok ? await customersRes.json() : { total: 0 };
+    const productsData = productsRes.ok ? await productsRes.json() : { total: 0 };
+    const ordersData = ordersRes.ok ? await ordersRes.json() : { total: 0 };
+
+    return {
+      totalCustomers: customersData.total || 0,
+      totalProducts: productsData.total || 0,
+      totalOrders: ordersData.total || 0,
+    };
+  } catch (error) {
+    console.error('Error fetching dashboard stats:', error);
+    return { totalCustomers: 0, totalProducts: 0, totalOrders: 0 };
+  }
+}
+
 export default async function AdminDashboard() {
   const now = new Date();
-  
-  // ── MOCK DATA ────────────────────────────────────────────────────────────
+
+  // Fetch real data
+  const { totalCustomers, totalProducts, totalOrders } = await getDashboardStats();
+
+  // ── MOCK DATA FOR NOW ────────────────────────────────────────────────────────────
   const revenue = 1254300;
   const revenuePrev = 980500;
-  const ordersCurrent = 42;
-  const ordersPrev = 35;
-  const totalProducts = 24;
-  const totalCustomers = 156;
+  const ordersCurrent = totalOrders; // Use real orders count
+  const ordersPrev = Math.max(0, ordersCurrent - 7); // Mock previous
 
   const revenueChange = Math.round(((revenue - revenuePrev) / revenuePrev) * 100);
   const ordersChange = Math.round(((ordersCurrent - ordersPrev) / ordersPrev) * 100);
