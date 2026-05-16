@@ -1,0 +1,732 @@
+# WoodCraft India — AI-Ready Master PRD
+
+### Full Stack Furniture E-Commerce Platform
+
+**Version:** 2.0 AI Development Edition
+**Tech Stack:** React + Vite + Tailwind + Node.js + Express + Supabase + Razorpay
+
+---
+
+# 1. PROJECT OVERVIEW
+
+## Project Name
+
+WoodCraft India
+
+## Project Type
+
+Modern Full Stack Furniture E-Commerce Platform
+
+## Goal
+
+Build a premium furniture e-commerce website for handcrafted solid wood furniture with:
+
+* Customer storefront
+* Authentication system
+* Cart & checkout
+* Razorpay payment integration
+* Customer dashboard
+* Admin panel
+* Product management
+* Order management
+* Supabase backend
+* Mobile responsive UI
+* SEO optimization
+
+---
+
+# 2. CORE TECH STACK
+
+## Frontend
+
+* React 18
+* Vite
+* React Router DOM v6
+* Tailwind CSS
+* Axios
+* Framer Motion
+* React Icons
+
+## Backend
+
+* Node.js
+* Express.js
+
+## Database
+
+* Supabase PostgreSQL
+
+## Authentication
+
+* Supabase Auth
+* Email/password login
+* Google OAuth
+
+## Payments
+
+* Razorpay
+
+## Deployment
+
+* Frontend → Vercel
+* Backend → Railway/Render
+
+---
+
+# 3. UI / DESIGN STYLE
+
+## Theme
+
+Premium luxury furniture brand
+
+## Design Feel
+
+* Elegant
+* Minimal
+* Warm wood tones
+* Modern Indian craftsmanship
+
+## Colors
+
+```txt
+Primary Dark: #3D2B1F
+Secondary Brown: #7A4E2D
+Accent Gold: #B5863A
+Cream Background: #F5F0E8
+Text Dark: #1C1A14
+Muted Text: #6B6555
+```
+
+## Fonts
+
+* Headings → Playfair Display
+* Body → DM Sans
+
+## UI Requirements
+
+* Rounded cards
+* Soft shadows
+* Smooth hover effects
+* Sticky navbar
+* Skeleton loaders
+* Toast notifications
+* Responsive mobile-first design
+
+---
+
+# 4. APPLICATION STRUCTURE
+
+# Public Pages
+
+## Home Page (/)
+
+Sections:
+
+* Hero banner
+* Featured categories
+* Featured products
+* Why choose us
+* Testimonials
+* Newsletter section
+* Footer
+
+---
+
+## Product Listing (/products)
+
+Features:
+
+* Product grid
+* Filters
+* Search
+* Sorting
+* Pagination
+* Category pills
+* Stock badges
+
+Filters:
+
+* Category
+* Wood type
+* Price range
+* In stock
+
+Sorting:
+
+* Featured
+* Price low-high
+* Price high-low
+* Newest
+* Best rated
+
+---
+
+## Product Detail (/products/:slug)
+
+Features:
+
+* Image gallery
+* Zoom effect
+* Product details
+* Ratings
+* Tabs
+* Related products
+* Add to cart
+* Wishlist
+* Quantity selector
+
+Tabs:
+
+* Description
+* Dimensions
+* Care instructions
+
+---
+
+## Cart Page (/cart)
+
+Features:
+
+* Quantity update
+* Remove item
+* Promo code
+* GST calculation
+* Delivery charges
+* Order summary
+* Persistent cart
+
+Guest cart stored in:
+
+```txt
+localStorage
+```
+
+---
+
+## Checkout (/checkout)
+
+Features:
+
+* Address form
+* Razorpay integration
+* Order summary
+* Payment processing
+* Order success page
+
+Payment methods:
+
+* UPI
+* Card
+* Wallet
+* Net banking
+
+---
+
+## Authentication Pages
+
+### /login
+
+* Email/password login
+* Google OAuth
+
+### /register
+
+* Name
+* Email
+* Phone
+* Password
+
+### /forgot-password
+
+* Reset password email
+
+---
+
+## Customer Dashboard (/account)
+
+Tabs:
+
+* Orders
+* Profile
+* Addresses
+* Wishlist
+
+---
+
+# 5. ADMIN PANEL
+
+## Admin Route
+
+```txt
+/admin/*
+```
+
+Protected by:
+
+```js
+role === "admin"
+```
+
+---
+
+## Admin Dashboard
+
+Widgets:
+
+* Revenue
+* Orders
+* Customers
+* Active products
+
+Charts:
+
+* Sales by category
+* Monthly revenue
+
+Tables:
+
+* Recent orders
+* Low stock products
+
+---
+
+## Product Management
+
+### Features
+
+* Create product
+* Edit product
+* Delete product
+* Upload images
+* Toggle featured
+* Toggle active
+
+### Product Fields
+
+```txt
+Name
+Slug
+Category
+Wood Type
+Price
+Original Price
+Description
+Dimensions
+Images
+Stock
+SKU
+Rating
+Featured
+Active
+```
+
+---
+
+## Order Management
+
+Features:
+
+* Order list
+* Status update
+* Filters
+* Export CSV
+* Order details modal
+
+Statuses:
+
+```txt
+pending
+confirmed
+shipped
+delivered
+cancelled
+```
+
+---
+
+## Customer Management
+
+Features:
+
+* Customer list
+* Order history
+* Total spend
+* Saved addresses
+
+---
+
+## Settings
+
+Fields:
+
+* Store info
+* GST
+* Razorpay keys
+* Delivery threshold
+
+---
+
+# 6. DATABASE SCHEMA
+
+# products table
+
+```sql
+id UUID PRIMARY KEY
+name TEXT
+slug TEXT UNIQUE
+category TEXT
+wood_type TEXT
+price NUMERIC
+original_price NUMERIC
+description TEXT
+dimensions JSONB
+images TEXT[]
+stock INTEGER
+sku TEXT UNIQUE
+is_featured BOOLEAN
+is_active BOOLEAN
+rating NUMERIC
+review_count INTEGER
+created_at TIMESTAMP
+```
+
+---
+
+# orders table
+
+```sql
+id UUID PRIMARY KEY
+user_id UUID
+status TEXT
+total_amount NUMERIC
+subtotal NUMERIC
+gst_amount NUMERIC
+delivery_charge NUMERIC
+shipping_address JSONB
+razorpay_order_id TEXT
+razorpay_payment_id TEXT
+promo_code TEXT
+discount_amount NUMERIC
+created_at TIMESTAMP
+```
+
+---
+
+# order_items table
+
+```sql
+id UUID PRIMARY KEY
+order_id UUID
+product_id UUID
+quantity INTEGER
+price_at_purchase NUMERIC
+```
+
+---
+
+# Additional Tables
+
+```txt
+cart_items
+wishlist
+reviews
+promo_codes
+addresses
+notifications
+```
+
+---
+
+# 7. API STRUCTURE
+
+# Products API
+
+```txt
+GET    /api/products
+GET    /api/products/:id
+POST   /api/products
+PUT    /api/products/:id
+DELETE /api/products/:id
+POST   /api/products/:id/images
+```
+
+---
+
+# Orders API
+
+```txt
+POST /api/orders
+POST /api/orders/verify-payment
+GET  /api/orders/my
+GET  /api/orders
+PUT  /api/orders/:id/status
+GET  /api/orders/:id
+```
+
+---
+
+# Auth API
+
+```txt
+POST /api/auth/register
+POST /api/auth/login
+GET  /api/users/me
+PUT  /api/users/me
+GET  /api/users
+```
+
+---
+
+# 8. PROJECT FOLDER STRUCTURE
+
+# Frontend
+
+```txt
+client/
+ ├── src/
+ │   ├── components/
+ │   ├── pages/
+ │   ├── layouts/
+ │   ├── hooks/
+ │   ├── context/
+ │   ├── services/
+ │   ├── utils/
+ │   ├── lib/
+ │   ├── assets/
+ │   └── routes/
+```
+
+---
+
+# Backend
+
+```txt
+server/
+ ├── routes/
+ ├── controllers/
+ ├── middleware/
+ ├── services/
+ ├── utils/
+ ├── config/
+ ├── supabase.js
+ └── index.js
+```
+
+---
+
+# 9. STATE MANAGEMENT
+
+Use:
+
+```txt
+React Context API
+```
+
+Contexts:
+
+* AuthContext
+* CartContext
+* WishlistContext
+
+---
+
+# 10. SECURITY REQUIREMENTS
+
+Must implement:
+
+* JWT validation
+* Protected routes
+* Admin middleware
+* HTTPS only
+* Supabase RLS
+* Rate limiting
+* Input validation
+* XSS protection
+* Environment variable security
+
+---
+
+# 11. PERFORMANCE REQUIREMENTS
+
+Targets:
+
+```txt
+LCP < 2.5s
+Page load < 2s
+```
+
+Optimization:
+
+* Lazy loading
+* Code splitting
+* WebP images
+* Image compression
+* Pagination
+* Memoization
+
+---
+
+# 12. SEO REQUIREMENTS
+
+Must include:
+
+* Meta tags
+* Dynamic titles
+* Sitemap.xml
+* robots.txt
+* OpenGraph tags
+* Product schema markup
+
+---
+
+# 13. RESPONSIVENESS
+
+Support:
+
+```txt
+375px → 1440px
+```
+
+Devices:
+
+* Mobile
+* Tablet
+* Desktop
+
+---
+
+# 14. ANIMATIONS
+
+Use:
+
+```txt
+Framer Motion
+```
+
+Animations:
+
+* Page transitions
+* Card hover
+* Fade-in sections
+* Skeleton loading
+
+---
+
+# 15. PAYMENT FLOW
+
+## Flow
+
+1. User clicks Place Order
+2. Backend creates Razorpay order
+3. Frontend opens Razorpay modal
+4. User completes payment
+5. Backend verifies signature
+6. Order status updated
+7. Stock reduced
+8. Redirect to success page
+
+---
+
+# 16. ENVIRONMENT VARIABLES
+
+# Frontend
+
+```env
+VITE_SUPABASE_URL=
+VITE_SUPABASE_ANON_KEY=
+VITE_RAZORPAY_KEY_ID=
+VITE_API_URL=
+```
+
+# Backend
+
+```env
+SUPABASE_URL=
+SUPABASE_SERVICE_KEY=
+RAZORPAY_KEY_ID=
+RAZORPAY_KEY_SECRET=
+PORT=5000
+```
+
+---
+
+# 17. FUTURE FEATURES
+
+* AR furniture preview
+* Multi-language support
+* Referral system
+* Loyalty points
+* WhatsApp notifications
+* AI recommendations
+* Product customization
+* EMI payments
+
+---
+
+# 18. AI CODE EDITOR INSTRUCTIONS
+
+Build this application as:
+
+## Architecture
+
+* Clean scalable architecture
+* Reusable components
+* Modular folder structure
+* Production-ready code
+
+## Coding Standards
+
+* Use functional React components
+* Use hooks
+* Use async/awaitaaa
+* Use clean API services
+* Use environment variables
+* Use reusable Tailwind classes
+
+## UI Expectations
+
+* Premium luxury UI
+* Modern animations
+* Fully responsive
+* Minimal and elegant
+
+## Backend Expectations
+
+* RESTful APIs
+* Proper error handling
+* Validation middleware
+* Secure authentication
+* Optimized SQL queries
+
+## Deliverables
+
+Generate:
+
+* Full frontend
+* Full backend
+* Supabase schema
+* API integrations
+* Authentication flow
+* Admin panel
+* Razorpay integration
+* Deployment-ready code
+
+---
+
+# 19. FINAL GOAL
+
+The final product should look and feel similar to:
+
+* Premium furniture brands
+* IKEA-style UX
+* Pepperfry-inspired product browsing
+* Luxury handcrafted furniture experience
+
+The application must be:
+
+* Fast
+* Secure
+* Scalable
+* SEO-friendly
+* Mobile responsive
+* Production ready
