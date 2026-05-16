@@ -25,7 +25,7 @@ exports.protect = async (req, res, next) => {
 };
 
 exports.admin = (req, res, next) => {
-    if (req.user && req.user.user_metadata && req.user.user_metadata.role === 'admin') {
+    if (req.user && req.user.email === 'royaltraditionalcraft@gmail.com') {
         next();
     } else {
         res.status(403).json({ error: 'Not authorized as an admin' });

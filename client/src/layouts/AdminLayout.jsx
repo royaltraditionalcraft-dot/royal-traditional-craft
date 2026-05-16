@@ -12,9 +12,8 @@ const AdminLayout = ({ children }) => {
     if (!loading) {
       if (!user) {
         navigate('/login');
-      } else if (user?.user_metadata?.role !== 'admin') {
-        // Uncomment this in production to restrict access
-        // navigate('/'); 
+      } else if (user?.email !== 'royaltraditionalcraft@gmail.com') {
+        navigate('/'); 
       }
     }
   }, [user, loading, navigate]);
