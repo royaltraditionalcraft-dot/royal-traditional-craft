@@ -23,7 +23,8 @@
     },
     {
       "src": "/(.*)",
-      "dest": "/client/dist/index.html"
+      "status": 200,
+      "dest": "/index.html"
     }
   ]
 }
