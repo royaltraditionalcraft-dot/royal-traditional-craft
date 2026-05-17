@@ -12,6 +12,19 @@ const Account = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  // Profile States
+  const [fullName, setFullName] = useState(user?.user_metadata?.full_name || '');
+  const [address, setAddress] = useState({
+    phone: '',
+    address_line1: '',
+    city: '',
+    state: '',
+    pincode: ''
+  });
+  const [updatingProfile, setUpdatingProfile] = useState(false);
+  const [addressLoading, setAddressLoading] = useState(true);
+  const [savingAddress, setSavingAddress] = useState(false);
+
   useEffect(() => {
     if (!user) {
       navigate('/login');
@@ -32,9 +45,106 @@ const Account = () => {
     fetchOrders();
   }, [user, navigate]);
 
+  // Fetch address from database when activeTab switches to profile
+  useEffect(() => {
+    const fetchAddress = async () => {
+      if (!user) return;
+      try {
+        const { data, error } = await supabase
+          .from('addresses')
+          .select('*')
+          .eq('user_id', user.id)
+          .maybeSingle();
+        
+        if (!error && data) {
+          setAddress({
+            phone: data.phone || '',
+            address_line1: data.address_line1 || '',
+            city: data.city || '',
+            state: data.state || '',
+            pincode: data.pincode || ''
+          });
+        }
+      } catch (err) {
+        console.error('Error fetching address:', err);
+      } finally {
+        setAddressLoading(false);
+      }
+    };
+
+    if (activeTab === 'profile') {
+      fetchAddress();
+    }
+  }, [user, activeTab]);
+
   const handleLogout = async () => {
     await supabase.auth.signOut();
     navigate('/');
+  };
+
+  const handleUpdateProfile = async (e) => {
+    e.preventDefault();
+    setUpdatingProfile(true);
+    try {
+      const { error } = await supabase.auth.updateUser({
+        data: { full_name: fullName }
+      });
+      if (error) throw error;
+      alert('Profile updated successfully!');
+    } catch (err) {
+      console.error('Error updating profile:', err);
+      alert('Failed to update profile.');
+    } finally {
+      setUpdatingProfile(false);
+    }
+  };
+
+  const handleUpdateAddress = async (e) => {
+    e.preventDefault();
+    setSavingAddress(true);
+    try {
+      const { data: existing, error: checkError } = await supabase
+        .from('addresses')
+        .select('id')
+        .eq('user_id', user.id)
+        .maybeSingle();
+
+      if (checkError) throw checkError;
+
+      const addressData = {
+        full_name: fullName || 'User',
+        phone: address.phone,
+        address_line1: address.address_line1,
+        city: address.city,
+        state: address.state,
+        pincode: address.pincode
+      };
+
+      if (existing) {
+        // Update existing address
+        const { error } = await supabase
+          .from('addresses')
+          .update(addressData)
+          .eq('id', existing.id);
+        if (error) throw error;
+      } else {
+        // Insert new address
+        const { error } = await supabase
+          .from('addresses')
+          .insert([{ user_id: user.id, ...addressData }]);
+        if (error) throw error;
+      }
+      alert('Address saved successfully!');
+    } catch (err) {
+      console.error('Error saving address:', err);
+      alert('Failed to save address.');
+    } finally {
+      setSavingAddress(false);
+    }
+  };
+
+  const handleAddressChange = (e) => {
+    setAddress({ ...address, [e.target.name]: e.target.value });
   };
 
   if (loading) {
@@ -63,7 +173,7 @@ const Account = () => {
                 onClick={() => setActiveTab('profile')}
                 className={`w-full flex items-center gap-3 px-4 py-2 rounded-lg transition-colors ${activeTab === 'profile' ? 'bg-primary-dark text-white' : 'text-text-muted hover:bg-cream hover:text-primary-dark'}`}
               >
-                <FiUser /> Profile
+                <FiUser /> Profile Settings
               </button>
               <button 
                 onClick={handleLogout}
@@ -125,7 +235,114 @@ const Account = () => {
           {activeTab === 'profile' && (
             <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100 min-h-[500px]">
               <h3 className="text-2xl font-heading text-primary-dark mb-6">Profile Settings</h3>
-              <p className="text-text-muted">Profile updates and address management coming soon.</p>
+              
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                {/* Profile Form */}
+                <form onSubmit={handleUpdateProfile} className="space-y-6">
+                  <h4 className="text-lg font-heading text-primary-dark border-b pb-2">Personal Information</h4>
+                  <div>
+                    <label className="block text-sm font-medium text-text-muted mb-1">Full Name</label>
+                    <input 
+                      required
+                      type="text" 
+                      value={fullName}
+                      onChange={(e) => setFullName(e.target.value)}
+                      className="w-full px-4 py-2 border rounded-md focus:ring-accent-gold focus:border-accent-gold" 
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-text-muted mb-1">Email Address</label>
+                    <input 
+                      disabled
+                      type="email" 
+                      value={user?.email || ''} 
+                      className="w-full px-4 py-2 border rounded-md bg-gray-50 text-gray-500 cursor-not-allowed" 
+                    />
+                  </div>
+                  <button 
+                    type="submit"
+                    disabled={updatingProfile}
+                    className="bg-primary-dark text-white px-6 py-2 rounded font-medium hover:bg-secondary-brown transition shadow-sm"
+                  >
+                    {updatingProfile ? 'Saving...' : 'Update Name'}
+                  </button>
+                </form>
+
+                {/* Shipping Address Form */}
+                <form onSubmit={handleUpdateAddress} className="space-y-6">
+                  <h4 className="text-lg font-heading text-primary-dark border-b pb-2">Default Shipping Address</h4>
+                  {addressLoading ? (
+                    <div className="text-sm text-text-muted">Loading address details...</div>
+                  ) : (
+                    <>
+                      <div>
+                        <label className="block text-sm font-medium text-text-muted mb-1">Phone Number</label>
+                        <input 
+                          required
+                          type="tel" 
+                          name="phone"
+                          value={address.phone}
+                          onChange={handleAddressChange}
+                          className="w-full px-4 py-2 border rounded-md focus:ring-accent-gold focus:border-accent-gold" 
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-text-muted mb-1">Street Address</label>
+                        <input 
+                          required
+                          type="text" 
+                          name="address_line1"
+                          value={address.address_line1}
+                          onChange={handleAddressChange}
+                          className="w-full px-4 py-2 border rounded-md focus:ring-accent-gold focus:border-accent-gold" 
+                        />
+                      </div>
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <label className="block text-sm font-medium text-text-muted mb-1">City</label>
+                          <input 
+                            required
+                            type="text" 
+                            name="city"
+                            value={address.city}
+                            onChange={handleAddressChange}
+                            className="w-full px-4 py-2 border rounded-md focus:ring-accent-gold focus:border-accent-gold" 
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-text-muted mb-1">State</label>
+                          <input 
+                            required
+                            type="text" 
+                            name="state"
+                            value={address.state}
+                            onChange={handleAddressChange}
+                            className="w-full px-4 py-2 border rounded-md focus:ring-accent-gold focus:border-accent-gold" 
+                          />
+                        </div>
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-text-muted mb-1">Pincode</label>
+                        <input 
+                          required
+                          type="text" 
+                          name="pincode"
+                          value={address.pincode}
+                          onChange={handleAddressChange}
+                          className="w-full px-4 py-2 border rounded-md focus:ring-accent-gold focus:border-accent-gold" 
+                        />
+                      </div>
+                      <button 
+                        type="submit"
+                        disabled={savingAddress}
+                        className="bg-primary-dark text-white px-6 py-2 rounded font-medium hover:bg-secondary-brown transition shadow-sm"
+                      >
+                        {savingAddress ? 'Saving...' : 'Save Address'}
+                      </button>
+                    </>
+                  )}
+                </form>
+              </div>
             </div>
           )}
         </div>

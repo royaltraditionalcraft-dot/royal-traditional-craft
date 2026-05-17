@@ -13,10 +13,13 @@ const Navbar = () => {
     <nav className="sticky top-0 z-50 w-full bg-cream border-b border-gray-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16 items-center">
-          <Link to="/" className="flex items-center gap-3">
+          <Link to="/" className="flex items-center gap-2 flex-shrink-0">
             <img src="/logo.jpg" alt="RoyalTraditionalCraft Logo" className="h-10 w-10 rounded-lg object-cover border border-accent-gold/20 shadow-sm" />
-            <span className="text-xl font-heading font-bold text-primary-dark tracking-wide">
+            <span className="text-base sm:text-xl font-heading font-bold text-primary-dark tracking-wide hidden sm:inline">
               RoyalTraditionalCraft
+            </span>
+            <span className="text-base font-heading font-bold text-primary-dark tracking-wide sm:hidden">
+              Royal Craft
             </span>
           </Link>
           <div className="hidden md:flex space-x-8">
