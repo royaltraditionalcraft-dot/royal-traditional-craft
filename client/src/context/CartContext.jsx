@@ -10,7 +10,7 @@ export const CartProvider = ({ children }) => {
   
   useEffect(() => {
     const loadCart = async () => {
-      const localCart = JSON.parse(localStorage.getItem('woodcraft_cart')) || [];
+      const localCart = JSON.parse(localStorage.getItem('royaltraditionalcraft_cart')) || [];
       
       if (user) {
         const { data, error } = await supabase
@@ -37,7 +37,7 @@ export const CartProvider = ({ children }) => {
   }, [user]);
 
   useEffect(() => {
-    localStorage.setItem('woodcraft_cart', JSON.stringify(cartItems));
+    localStorage.setItem('royaltraditionalcraft_cart', JSON.stringify(cartItems));
   }, [cartItems]);
 
   const addToCart = async (product, quantity = 1) => {

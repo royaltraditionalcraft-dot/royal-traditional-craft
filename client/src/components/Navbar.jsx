@@ -13,8 +13,11 @@ const Navbar = () => {
     <nav className="sticky top-0 z-50 w-full bg-cream border-b border-gray-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16 items-center">
-          <Link to="/" className="text-2xl font-heading font-bold text-primary-dark">
-            WoodCraft
+          <Link to="/" className="flex items-center gap-3">
+            <img src="/logo.jpg" alt="RoyalTraditionalCraft Logo" className="h-10 w-10 rounded-lg object-cover border border-accent-gold/20 shadow-sm" />
+            <span className="text-xl font-heading font-bold text-primary-dark tracking-wide">
+              RoyalTraditionalCraft
+            </span>
           </Link>
           <div className="hidden md:flex space-x-8">
             <Link to="/" className="text-text-muted hover:text-primary-dark transition font-medium">Home</Link>

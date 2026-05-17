@@ -59,7 +59,7 @@ const Checkout = () => {
         key: import.meta.env.VITE_RAZORPAY_KEY_ID, // Enter the Key ID generated from the Dashboard
         amount: orderResponse.amount,
         currency: orderResponse.currency,
-        name: "WoodCraft India",
+        name: "RoyalTraditionalCraft",
         description: "Premium Furniture Purchase",
         order_id: orderResponse.razorpayOrderId,
         handler: async function (response) {

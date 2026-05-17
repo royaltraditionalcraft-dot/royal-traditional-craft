@@ -28,7 +28,7 @@ const Home = () => {
       {/* Hero Section */}
       <div className="bg-cream">
         <div className="max-w-7xl mx-auto px-4 py-20 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-5xl md:text-6xl font-heading text-primary-dark mb-6">WoodCraft India</h1>
+          <h1 className="text-5xl md:text-6xl font-heading text-primary-dark mb-6">RoyalTraditionalCraft</h1>
           <p className="text-lg text-text-muted max-w-2xl mx-auto">
             Discover premium luxury handcrafted solid wood furniture. Designed with elegance, built for a lifetime.
           </p>

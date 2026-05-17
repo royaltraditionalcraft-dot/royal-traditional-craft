@@ -42,7 +42,10 @@ const AdminLayout = ({ children }) => {
         isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
       }`}>
         <div className="p-6 flex justify-between items-center border-b border-white/10">
-          <h2 className="text-2xl font-heading font-bold">WoodCraft Admin</h2>
+          <div className="flex items-center gap-3">
+            <img src="/logo.jpg" alt="Logo" className="w-8 h-8 rounded-lg object-cover border border-white/20" />
+            <h2 className="text-lg font-heading font-bold tracking-wide">RoyalTraditionalCraft</h2>
+          </div>
           {/* Close Sidebar Button on Mobile */}
           <button 
             onClick={() => setIsSidebarOpen(false)} 
