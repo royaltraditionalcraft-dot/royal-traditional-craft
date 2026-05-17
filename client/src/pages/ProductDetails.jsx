@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { FiArrowLeft, FiShoppingCart } from 'react-icons/fi';
 import { FaWhatsapp } from 'react-icons/fa';
@@ -8,6 +8,7 @@ import Loader from '../components/Loader';
 
 const ProductDetails = () => {
   const { slug } = useParams();
+  const navigate = useNavigate();
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -19,6 +20,15 @@ const ProductDetails = () => {
     const message = `Hello RoyalTraditionalCraft, I am interested in inquiring about "${product.name}" (Price: ₹${product.price.toLocaleString()}). Can you please share more details, customization options, or real pictures?\n\nProduct Link: ${window.location.href}`;
     const encodedMessage = encodeURIComponent(message);
     window.open(`https://wa.me/${phoneNumber}?text=${encodedMessage}`, '_blank');
+  };
+
+  const handleBuyNow = async () => {
+    try {
+      await addToCart({ id: product.id, name: product.name, price: product.price, image: product.images?.[0] });
+      navigate('/checkout');
+    } catch (err) {
+      console.error('Failed to buy now', err);
+    }
   };
 
   useEffect(() => {
@@ -92,6 +102,13 @@ const ProductDetails = () => {
             className="w-full bg-primary-dark text-white px-8 py-4 rounded-xl hover:bg-secondary-brown transition shadow-md flex items-center justify-center gap-3 font-medium text-lg"
           >
             <FiShoppingCart /> Add to Cart
+          </button>
+
+          <button 
+            onClick={handleBuyNow}
+            className="w-full mt-4 bg-accent-gold hover:bg-yellow-600 text-white px-8 py-4 rounded-xl transition shadow-md flex items-center justify-center gap-3 font-medium text-lg"
+          >
+            Buy Now
           </button>
 
           <button 
