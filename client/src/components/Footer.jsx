@@ -18,15 +18,14 @@ const Footer = () => {
             <li><Link to="/" className="hover:text-accent-gold transition">Home</Link></li>
             <li><Link to="/products" className="hover:text-accent-gold transition">Shop Furniture</Link></li>
             <li><Link to="/cart" className="hover:text-accent-gold transition">My Cart</Link></li>
-            <li><Link to="/login" className="hover:text-accent-gold transition">Admin Login</Link></li>
           </ul>
         </div>
         <div>
           <h4 className="text-lg font-bold text-white mb-4">Contact Us</h4>
           <ul className="space-y-2 text-sm">
-            <li>Email: support@royaltraditionalcraft.com</li>
-            <li>Phone: +91 98765 43210</li>
-            <li>Address: 123 Furniture Lane, Jaipur, Rajasthan, India</li>
+            <li>Email: royaltraditionalcraft@gmail.com</li>
+            <li>Phone: +91 77426 27542</li>
+            <li>Address: Tarangar, Churu, Rajasthan, India</li>
           </ul>
         </div>
       </div>
