@@ -6,6 +6,7 @@ const AdminProducts = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingId, setEditingId] = useState(null);
   const [formData, setFormData] = useState({
     name: '',
     slug: '',
@@ -59,6 +60,29 @@ const AdminProducts = () => {
     }
   };
 
+  const handleEditClick = (product) => {
+    setEditingId(product.id);
+    setFormData({
+      name: product.name || '',
+      slug: product.slug || '',
+      category: product.category || '',
+      price: product.price || '',
+      original_price: product.original_price || '',
+      stock: product.stock || '',
+      description: product.description || '',
+      images: product.images ? product.images.join(', ') : ''
+    });
+    setIsModalOpen(true);
+  };
+
+  const handleAddNewClick = () => {
+    setEditingId(null);
+    setFormData({
+      name: '', slug: '', category: '', price: '', original_price: '', stock: '', description: '', images: ''
+    });
+    setIsModalOpen(true);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -70,15 +94,17 @@ const AdminProducts = () => {
         images: formData.images ? formData.images.split(',').map(s => s.trim()) : []
       };
 
-      await api.post('/products', payload);
+      if (editingId) {
+        await api.put(`/products/${editingId}`, payload);
+      } else {
+        await api.post('/products', payload);
+      }
+
       setIsModalOpen(false);
-      setFormData({
-        name: '', slug: '', category: '', price: '', original_price: '', stock: '', description: '', images: ''
-      });
       fetchProducts();
     } catch (error) {
-      console.error('Failed to add product', error);
-      alert('Failed to add product. ' + (error.response?.data?.error || error.message));
+      console.error('Failed to save product', error);
+      alert('Failed to save product. ' + (error.response?.data?.error || error.message));
     }
   };
 
@@ -89,7 +115,7 @@ const AdminProducts = () => {
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-heading text-primary-dark">Products</h2>
         <button 
-          onClick={() => setIsModalOpen(true)}
+          onClick={handleAddNewClick}
           className="flex items-center gap-2 bg-primary-dark text-white px-4 py-2 rounded-lg hover:bg-secondary-brown transition"
         >
           <FiPlus /> Add Product
@@ -127,7 +153,7 @@ const AdminProducts = () => {
                     </span>
                   </td>
                   <td className="px-6 py-4 text-right">
-                    <button className="text-accent-gold hover:text-primary-dark transition p-1"><FiEdit2 /></button>
+                    <button onClick={() => handleEditClick(product)} className="text-accent-gold hover:text-primary-dark transition p-1"><FiEdit2 /></button>
                     <button onClick={() => handleDelete(product.id)} className="text-red-500 hover:text-red-700 transition p-1 ml-2"><FiTrash2 /></button>
                   </td>
                 </tr>
@@ -142,7 +168,9 @@ const AdminProducts = () => {
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-xl shadow-lg w-full max-w-2xl max-h-[90vh] overflow-y-auto">
             <div className="p-6 border-b border-gray-100 flex justify-between items-center sticky top-0 bg-white">
-              <h3 className="text-xl font-heading font-bold text-primary-dark">Add New Product</h3>
+              <h3 className="text-xl font-heading font-bold text-primary-dark">
+                {editingId ? 'Edit Product' : 'Add New Product'}
+              </h3>
               <button onClick={() => setIsModalOpen(false)} className="text-text-muted hover:text-red-500">
                 <FiX size={24} />
               </button>

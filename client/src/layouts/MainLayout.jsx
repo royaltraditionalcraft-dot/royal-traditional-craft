@@ -1,4 +1,5 @@
 import Navbar from '../components/Navbar';
+import Footer from '../components/Footer';
 
 const MainLayout = ({ children }) => {
   return (
@@ -7,11 +8,7 @@ const MainLayout = ({ children }) => {
       <main className="flex-grow">
         {children}
       </main>
-      <footer className="bg-primary-dark text-cream py-8 mt-auto">
-        <div className="max-w-7xl mx-auto px-4 text-center">
-          <p>&copy; {new Date().getFullYear()} WoodCraft India. All rights reserved.</p>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 };

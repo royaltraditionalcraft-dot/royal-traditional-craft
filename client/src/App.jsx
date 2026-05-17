@@ -12,22 +12,10 @@ import Account from './pages/Account';
 import AdminDashboard from './pages/admin/Dashboard';
 import AdminProducts from './pages/admin/Products';
 import AdminOrders from './pages/admin/Orders';
+import ProductDetails from './pages/ProductDetails';
 
-const Home = () => (
-  <MainLayout>
-    <div className="p-8 text-center py-20">
-      <h1 className="text-5xl md:text-6xl font-heading text-primary-dark mb-6">WoodCraft India</h1>
-      <p className="text-lg text-text-muted max-w-2xl mx-auto">
-        Discover premium luxury handcrafted solid wood furniture. Designed with elegance, built for a lifetime.
-      </p>
-      <div className="mt-10">
-        <a href="/products" className="bg-primary-dark text-cream px-8 py-3 rounded-full hover:bg-secondary-brown transition shadow-md inline-block">
-          Explore Collection
-        </a>
-      </div>
-    </div>
-  </MainLayout>
-);
+import Home from './pages/Home';
+import NotFound from './pages/NotFound';
 
 function App() {
   return (
@@ -40,6 +28,7 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/products" element={<MainLayout><Products /></MainLayout>} />
+            <Route path="/products/:slug" element={<MainLayout><ProductDetails /></MainLayout>} />
             <Route path="/cart" element={<MainLayout><Cart /></MainLayout>} />
             <Route path="/checkout" element={<MainLayout><Checkout /></MainLayout>} />
             
@@ -50,6 +39,9 @@ function App() {
             <Route path="/admin" element={<AdminLayout><AdminDashboard /></AdminLayout>} />
             <Route path="/admin/products" element={<AdminLayout><AdminProducts /></AdminLayout>} />
             <Route path="/admin/orders" element={<AdminLayout><AdminOrders /></AdminLayout>} />
+            
+            {/* Catch-all 404 Route */}
+            <Route path="*" element={<NotFound />} />
           </Routes>
         </Router>
       </CartProvider>
