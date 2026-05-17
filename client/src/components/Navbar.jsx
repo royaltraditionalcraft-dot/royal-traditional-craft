@@ -1,11 +1,13 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
-import { FiShoppingCart, FiUser } from 'react-icons/fi';
+import { FiShoppingCart, FiUser, FiMenu, FiX } from 'react-icons/fi';
 
 const Navbar = () => {
   const { user } = useAuth();
   const { cartCount } = useCart();
+  const [isOpen, setIsOpen] = useState(false);
   
   return (
     <nav className="sticky top-0 z-50 w-full bg-cream border-b border-gray-200">
@@ -18,27 +20,43 @@ const Navbar = () => {
             <Link to="/" className="text-text-muted hover:text-primary-dark transition font-medium">Home</Link>
             <Link to="/products" className="text-text-muted hover:text-primary-dark transition font-medium">Shop</Link>
           </div>
-          <div className="flex items-center space-x-6">
-            <Link to="/cart" className="text-primary-dark hover:text-secondary-brown transition relative flex items-center">
+          <div className="flex items-center space-x-4 sm:space-x-6">
+            <Link to="/cart" className="text-primary-dark hover:text-secondary-brown transition relative flex items-center p-2">
               <FiShoppingCart className="w-6 h-6" />
               {cartCount > 0 && (
-                <span className="absolute -top-2 -right-2 bg-accent-gold text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center shadow">
+                <span className="absolute -top-1 -right-1 bg-accent-gold text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center shadow">
                   {cartCount}
                 </span>
               )}
             </Link>
             {user ? (
-              <Link to="/account" className="text-primary-dark hover:text-secondary-brown transition">
+              <Link to="/account" className="text-primary-dark hover:text-secondary-brown transition p-2">
                 <FiUser className="w-6 h-6" />
               </Link>
             ) : (
-              <Link to="/login" className="text-sm font-medium bg-primary-dark text-white px-5 py-2.5 rounded-md hover:bg-secondary-brown transition shadow-sm">
+              <Link to="/login" className="text-sm font-medium bg-primary-dark text-white px-4 py-2 rounded-md hover:bg-secondary-brown transition shadow-sm">
                 Login
               </Link>
             )}
+            
+            {/* Mobile Hamburger Button */}
+            <button 
+              onClick={() => setIsOpen(!isOpen)} 
+              className="md:hidden text-primary-dark hover:bg-gray-100 p-2 rounded-lg transition"
+            >
+              {isOpen ? <FiX size={24} /> : <FiMenu size={24} />}
+            </button>
           </div>
         </div>
       </div>
+      
+      {/* Mobile Drawer Dropdown */}
+      {isOpen && (
+        <div className="md:hidden bg-cream border-t border-gray-200 px-6 py-4 space-y-4 shadow-inner">
+          <Link to="/" onClick={() => setIsOpen(false)} className="block text-text-muted hover:text-primary-dark transition font-medium text-lg py-1">Home</Link>
+          <Link to="/products" onClick={() => setIsOpen(false)} className="block text-text-muted hover:text-primary-dark transition font-medium text-lg py-1">Shop</Link>
+        </div>
+      )}
     </nav>
   );
 };
