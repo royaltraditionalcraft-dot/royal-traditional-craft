@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { FiArrowLeft, FiShoppingCart } from 'react-icons/fi';
+import { FaWhatsapp } from 'react-icons/fa';
 import api from '../utils/api';
 import Loader from '../components/Loader';
 
@@ -12,6 +13,13 @@ const ProductDetails = () => {
   const [error, setError] = useState(null);
   const [activeImage, setActiveImage] = useState(0);
   const { addToCart } = useCart();
+
+  const handleWhatsAppInquiry = () => {
+    const phoneNumber = '917742627542';
+    const message = `Hello RoyalTraditionalCraft, I am interested in inquiring about "${product.name}" (Price: ₹${product.price.toLocaleString()}). Can you please share more details, customization options, or real pictures?\n\nProduct Link: ${window.location.href}`;
+    const encodedMessage = encodeURIComponent(message);
+    window.open(`https://wa.me/${phoneNumber}?text=${encodedMessage}`, '_blank');
+  };
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -84,6 +92,13 @@ const ProductDetails = () => {
             className="w-full bg-primary-dark text-white px-8 py-4 rounded-xl hover:bg-secondary-brown transition shadow-md flex items-center justify-center gap-3 font-medium text-lg"
           >
             <FiShoppingCart /> Add to Cart
+          </button>
+
+          <button 
+            onClick={handleWhatsAppInquiry}
+            className="w-full mt-4 bg-[#25D366] hover:bg-[#20ba56] text-white px-8 py-4 rounded-xl transition shadow-md flex items-center justify-center gap-3 font-medium text-lg border border-[#25D366]/20"
+          >
+            <FaWhatsapp className="text-2xl" /> Inquire on WhatsApp
           </button>
         </div>
       </div>
