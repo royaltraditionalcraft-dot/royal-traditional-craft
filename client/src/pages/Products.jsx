@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import api from '../utils/api';
 import ProductCard from '../components/ProductCard';
+import Loader from '../components/Loader';
 import { FiSearch, FiSliders, FiRefreshCw } from 'react-icons/fi';
 
 const Products = () => {
@@ -50,13 +51,7 @@ const Products = () => {
     return matchesSearch && matchesCategory && matchesMinPrice && matchesMaxPrice;
   });
 
-  if (loading) {
-    return (
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 flex justify-center items-center min-h-[50vh]">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary-dark"></div>
-      </div>
-    );
-  }
+  if (loading) return <Loader />;
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 font-body">

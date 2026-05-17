@@ -3,6 +3,7 @@ import { useAuth } from '../context/AuthContext';
 import { FiHome, FiBox, FiList, FiSettings, FiLogOut } from 'react-icons/fi';
 import { supabase } from '../supabase';
 import { useEffect } from 'react';
+import Loader from '../components/Loader';
 
 const AdminLayout = ({ children }) => {
   const { user, loading } = useAuth();
@@ -23,7 +24,7 @@ const AdminLayout = ({ children }) => {
     navigate('/');
   };
 
-  if (loading) return <div className="p-20 text-center">Loading...</div>;
+  if (loading) return <Loader />;
 
   return (
     <div className="flex h-screen bg-gray-50 font-body">

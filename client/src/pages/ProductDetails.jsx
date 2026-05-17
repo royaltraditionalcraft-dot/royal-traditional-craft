@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { FiArrowLeft, FiShoppingCart } from 'react-icons/fi';
 import api from '../utils/api';
+import Loader from '../components/Loader';
 
 const ProductDetails = () => {
   const { slug } = useParams();
@@ -26,7 +27,7 @@ const ProductDetails = () => {
     fetchProduct();
   }, [slug]);
 
-  if (loading) return <div className="p-20 text-center font-heading text-xl">Loading product details...</div>;
+  if (loading) return <Loader />;
   if (error || !product) return <div className="p-20 text-center font-heading text-xl text-red-500">{error}</div>;
 
   return (
