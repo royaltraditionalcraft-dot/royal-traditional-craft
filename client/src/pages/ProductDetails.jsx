@@ -9,6 +9,7 @@ const ProductDetails = () => {
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [activeImage, setActiveImage] = useState(0);
   const { addToCart } = useCart();
 
   useEffect(() => {
@@ -35,15 +36,36 @@ const ProductDetails = () => {
       </Link>
       
       <div className="flex flex-col md:flex-row gap-12">
-        {/* Product Image */}
-        <div className="w-full md:w-1/2">
-          <div className="bg-gray-100 rounded-xl overflow-hidden shadow-sm aspect-square flex items-center justify-center">
+        {/* Product Image & Gallery */}
+        <div className="w-full md:w-1/2 space-y-4">
+          <div className="bg-gray-100 rounded-2xl overflow-hidden shadow-sm aspect-square flex items-center justify-center relative group">
             {product.images && product.images.length > 0 ? (
-              <img src={product.images[0]} alt={product.name} className="w-full h-full object-cover" />
+              <img 
+                src={product.images[activeImage]} 
+                alt={product.name} 
+                className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" 
+              />
             ) : (
               <div className="text-text-muted">No Image Available</div>
             )}
           </div>
+
+          {/* Thumbnails Row */}
+          {product.images && product.images.length > 1 && (
+            <div className="flex gap-3 overflow-x-auto py-2">
+              {product.images.map((img, index) => (
+                <button
+                  key={index}
+                  onClick={() => setActiveImage(index)}
+                  className={`w-20 h-20 rounded-xl overflow-hidden border-2 flex-shrink-0 bg-gray-50 transition ${
+                    activeImage === index ? 'border-accent-gold shadow-md' : 'border-transparent hover:border-gray-300'
+                  }`}
+                >
+                  <img src={img} alt={`${product.name} thumb ${index}`} className="w-full h-full object-cover" />
+                </button>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Product Info */}
