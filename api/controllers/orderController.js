@@ -10,15 +10,25 @@ const razorpay = new Razorpay({
 
 exports.createOrder = async (req, res) => {
     try {
-        const { user_id, items, total_amount, subtotal, shipping_address } = req.body;
+        const { user_id, items, total_amount, subtotal, shipping_address, payment_method = 'online' } = req.body;
 
-        // 1. Create order in Razorpay
-        const options = {
-            amount: Math.round(total_amount * 100), // amount in smallest currency unit (paise)
-            currency: "INR",
-            receipt: `rcpt_${Date.now()}`
-        };
-        const razorpayOrder = await razorpay.orders.create(options);
+        let razorpayOrderId = null;
+        let amount = Math.round(total_amount * 100);
+        let currency = "INR";
+
+        if (payment_method === 'online') {
+            // 1. Create order in Razorpay
+            const options = {
+                amount,
+                currency,
+                receipt: `rcpt_${Date.now()}`
+            };
+            const razorpayOrder = await razorpay.orders.create(options);
+            razorpayOrderId = razorpayOrder.id;
+        } else {
+            // Cash on Delivery
+            razorpayOrderId = `COD_${Date.now()}`;
+        }
 
         // 2. Create order in our Supabase DB
         const { data: orderData, error: orderError } = await supabase.from('orders').insert([{
@@ -26,8 +36,8 @@ exports.createOrder = async (req, res) => {
             total_amount,
             subtotal,
             shipping_address,
-            razorpay_order_id: razorpayOrder.id,
-            status: 'pending'
+            razorpay_order_id: razorpayOrderId,
+            status: payment_method === 'cod' ? 'confirmed' : 'pending'
         }]).select().single();
 
         if (orderError) throw orderError;
@@ -45,9 +55,10 @@ exports.createOrder = async (req, res) => {
 
         res.status(201).json({
             order: orderData,
-            razorpayOrderId: razorpayOrder.id,
-            amount: options.amount,
-            currency: options.currency
+            razorpayOrderId: razorpayOrderId,
+            amount: amount,
+            currency: currency,
+            payment_method
         });
     } catch (error) {
         res.status(500).json({ error: error.message });

@@ -9,6 +9,7 @@ const Checkout = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState('cod');
   const [address, setAddress] = useState({
     fullName: user?.user_metadata?.full_name || '',
     phone: '',
@@ -51,10 +52,18 @@ const Checkout = () => {
         items,
         total_amount: cartTotal,
         subtotal: cartTotal,
-        shipping_address: address
+        shipping_address: address,
+        payment_method: paymentMethod
       });
 
-      // 2. Initialize Razorpay Modal
+      if (paymentMethod === 'cod') {
+        clearCart();
+        alert("Order Placed Successfully! Your handcrafted furniture is in process via Cash on Delivery.");
+        navigate('/account');
+        return;
+      }
+
+      // 2. Initialize Razorpay Modal (Online Payment)
       const options = {
         key: import.meta.env.VITE_RAZORPAY_KEY_ID, // Enter the Key ID generated from the Dashboard
         amount: orderResponse.amount,
@@ -101,7 +110,7 @@ const Checkout = () => {
 
     } catch (error) {
       console.error("Order creation failed", error);
-      alert("Something went wrong while creating the order.");
+      alert("Something went wrong while creating the order. Please make sure all details are correct.");
     } finally {
       setLoading(false);
     }
@@ -142,12 +151,36 @@ const Checkout = () => {
               </div>
             </div>
 
+            {/* Payment Method Selector */}
+            <h2 className="text-xl font-heading text-primary-dark mt-8 mb-6 border-b pb-4">Payment Method</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <label className={`border rounded-xl p-4 flex items-center justify-between cursor-pointer transition ${paymentMethod === 'cod' ? 'border-accent-gold bg-cream/10' : 'border-gray-200'}`}>
+                <div className="flex items-center gap-3">
+                  <input type="radio" name="paymentMethod" value="cod" checked={paymentMethod === 'cod'} onChange={() => setPaymentMethod('cod')} className="accent-accent-gold" />
+                  <div>
+                    <p className="font-bold text-primary-dark">Cash on Delivery (COD)</p>
+                    <p className="text-xs text-text-muted">Pay in cash upon delivery</p>
+                  </div>
+                </div>
+              </label>
+              
+              <label className={`border rounded-xl p-4 flex items-center justify-between cursor-pointer transition ${paymentMethod === 'online' ? 'border-accent-gold bg-cream/10' : 'border-gray-200'}`}>
+                <div className="flex items-center gap-3">
+                  <input type="radio" name="paymentMethod" value="online" checked={paymentMethod === 'online'} onChange={() => setPaymentMethod('online')} className="accent-accent-gold" />
+                  <div>
+                    <p className="font-bold text-primary-dark">Online Payment</p>
+                    <p className="text-xs text-text-muted">UPI, Card, Netbanking (Razorpay)</p>
+                  </div>
+                </div>
+              </label>
+            </div>
+
             <button 
               type="submit" 
               disabled={loading}
               className={`w-full mt-8 py-4 text-white rounded font-medium transition flex justify-center items-center ${loading ? 'bg-gray-400 cursor-not-allowed' : 'bg-primary-dark hover:bg-secondary-brown'}`}
             >
-              {loading ? 'Processing...' : `Pay ₹${cartTotal.toLocaleString()}`}
+              {loading ? 'Processing...' : paymentMethod === 'cod' ? 'Place Order (Cash on Delivery)' : `Pay ₹${cartTotal.toLocaleString()}`}
             </button>
           </form>
         </div>
