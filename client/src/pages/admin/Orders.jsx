@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { FiEye } from 'react-icons/fi';
+import { FiEye, FiX } from 'react-icons/fi';
 import api from '../../utils/api';
 
 const AdminOrders = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [selectedOrder, setSelectedOrder] = useState(null);
 
   const fetchOrders = async () => {
     try {
@@ -80,7 +81,12 @@ const AdminOrders = () => {
                     </select>
                   </td>
                   <td className="px-6 py-4 text-right">
-                    <button className="text-accent-gold hover:text-primary-dark transition p-1"><FiEye /></button>
+                    <button 
+                      onClick={() => setSelectedOrder(order)}
+                      className="text-accent-gold hover:text-primary-dark transition p-1"
+                    >
+                      <FiEye />
+                    </button>
                   </td>
                 </tr>
               ))}
@@ -88,6 +94,134 @@ const AdminOrders = () => {
           </table>
         </div>
       </div>
+
+      {/* Modal */}
+      {selectedOrder && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-xl border border-gray-100 flex flex-col">
+            {/* Modal Header */}
+            <div className="flex justify-between items-center px-6 py-4 border-b border-gray-100">
+              <div>
+                <h3 className="text-lg font-bold text-primary-dark font-heading">
+                  Order Details
+                </h3>
+                <p className="text-xs text-text-muted font-mono mt-0.5">ID: {selectedOrder.id}</p>
+              </div>
+              <button 
+                onClick={() => setSelectedOrder(null)} 
+                className="text-gray-400 hover:text-gray-600 transition p-2 rounded-full hover:bg-gray-50"
+              >
+                <FiX size={20} />
+              </button>
+            </div>
+
+            {/* Modal Body */}
+            <div className="p-6 space-y-6 overflow-y-auto">
+              {/* Status & Date */}
+              <div className="grid grid-cols-2 gap-4 bg-gray-50 p-4 rounded-xl text-sm">
+                <div>
+                  <p className="text-text-muted mb-1">Order Date</p>
+                  <p className="font-semibold text-primary-dark">
+                    {new Date(selectedOrder.created_at).toLocaleString()}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-text-muted mb-1">Status</p>
+                  <p className="font-semibold capitalize text-primary-dark">
+                    {selectedOrder.status}
+                  </p>
+                </div>
+              </div>
+
+              {/* Shipping Address */}
+              <div>
+                <h4 className="text-sm font-bold text-primary-dark mb-3 uppercase tracking-wider">
+                  Shipping Information
+                </h4>
+                <div className="bg-gray-50 border border-gray-100 rounded-xl p-4 space-y-2 text-sm text-text-muted">
+                  <p><strong className="text-primary-dark">Name:</strong> {selectedOrder.shipping_address?.fullName}</p>
+                  <p><strong className="text-primary-dark">Phone:</strong> {selectedOrder.shipping_address?.phone}</p>
+                  <p>
+                    <strong className="text-primary-dark">Address:</strong> {selectedOrder.shipping_address?.addressLine1}
+                  </p>
+                  <p>
+                    <strong className="text-primary-dark">Location:</strong> {selectedOrder.shipping_address?.city}, {selectedOrder.shipping_address?.state} - {selectedOrder.shipping_address?.pincode}
+                  </p>
+                </div>
+              </div>
+
+              {/* Items Purchased */}
+              <div>
+                <h4 className="text-sm font-bold text-primary-dark mb-3 uppercase tracking-wider">
+                  Items Details
+                </h4>
+                <div className="divide-y divide-gray-100 border border-gray-100 rounded-xl overflow-hidden bg-white">
+                  {selectedOrder.order_items?.map((item) => (
+                    <div key={item.id} className="flex gap-4 p-4 items-center">
+                      <div className="w-16 h-16 rounded overflow-hidden flex-shrink-0 bg-gray-50 border border-gray-100">
+                        <img 
+                          src={item.products?.images?.[0] || item.products?.image || 'https://via.placeholder.com/150'} 
+                          alt={item.products?.name} 
+                          className="w-full h-full object-cover" 
+                        />
+                      </div>
+                      <div className="flex-grow text-sm">
+                        <p className="font-bold text-primary-dark line-clamp-1">
+                          {item.products?.name || 'Unknown Product'}
+                        </p>
+                        <p className="text-text-muted">Qty: {item.quantity}</p>
+                      </div>
+                      <div className="text-sm font-bold text-primary-dark text-right">
+                        <p>₹{item.price_at_purchase?.toLocaleString()}</p>
+                        <p className="text-xs text-text-muted font-normal">
+                          Total: ₹{(item.price_at_purchase * item.quantity).toLocaleString()}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                  {(!selectedOrder.order_items || selectedOrder.order_items.length === 0) && (
+                    <div className="p-4 text-center text-text-muted text-sm">No items found in this order.</div>
+                  )}
+                </div>
+              </div>
+
+              {/* Price Details */}
+              <div className="border-t border-gray-100 pt-4 flex flex-col items-end text-sm space-y-1">
+                <div className="flex justify-between w-64 text-text-muted">
+                  <span>Subtotal:</span>
+                  <span className="font-semibold text-primary-dark">₹{selectedOrder.subtotal?.toLocaleString()}</span>
+                </div>
+                {selectedOrder.delivery_charge > 0 && (
+                  <div className="flex justify-between w-64 text-text-muted">
+                    <span>Delivery Charge:</span>
+                    <span className="font-semibold text-primary-dark">₹{selectedOrder.delivery_charge?.toLocaleString()}</span>
+                  </div>
+                )}
+                {selectedOrder.gst_amount > 0 && (
+                  <div className="flex justify-between w-64 text-text-muted">
+                    <span>GST Amount:</span>
+                    <span className="font-semibold text-primary-dark">₹{selectedOrder.gst_amount?.toLocaleString()}</span>
+                  </div>
+                )}
+                <div className="flex justify-between w-64 pt-2 text-base font-bold text-primary-dark border-t border-dashed mt-2">
+                  <span>Grand Total:</span>
+                  <span className="text-lg">₹{selectedOrder.total_amount?.toLocaleString()}</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Modal Footer */}
+            <div className="flex justify-end gap-3 px-6 py-4 bg-gray-50 border-t border-gray-100 rounded-b-2xl">
+              <button 
+                onClick={() => setSelectedOrder(null)} 
+                className="bg-primary-dark text-white px-5 py-2 rounded-lg hover:bg-secondary-brown transition text-sm font-semibold"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
