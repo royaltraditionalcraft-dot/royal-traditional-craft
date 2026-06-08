@@ -119,3 +119,21 @@ CREATE POLICY "Users can manage their own cart." ON cart_items FOR ALL USING (au
 
 -- Wishlist: Users manage their own wishlist
 CREATE POLICY "Users can manage their own wishlist." ON wishlist FOR ALL USING (auth.uid() = user_id);
+
+-- Reviews Table
+CREATE TABLE reviews (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    product_id UUID REFERENCES products(id) ON DELETE CASCADE,
+    user_id UUID REFERENCES auth.users(id) ON DELETE SET NULL,
+    user_name TEXT NOT NULL,
+    rating INTEGER CHECK (rating >= 1 AND rating <= 5) NOT NULL,
+    comment TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Set up Row Level Security (RLS) for reviews
+ALTER TABLE reviews ENABLE ROW LEVEL SECURITY;
+
+-- RLS Policies for reviews
+CREATE POLICY "Reviews are viewable by everyone." ON reviews FOR SELECT USING (true);
+CREATE POLICY "Users can insert their own reviews." ON reviews FOR INSERT WITH CHECK (auth.uid() = user_id);

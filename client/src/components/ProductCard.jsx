@@ -1,16 +1,32 @@
 import { motion } from 'framer-motion';
 import { useCart } from '../context/CartContext';
 import { Link } from 'react-router-dom';
+import { FaStar, FaRegStar } from 'react-icons/fa';
 
 const ProductCard = ({ product }) => {
   const { addToCart } = useCart();
+
+  const renderStars = (rating) => {
+    const stars = [];
+    const roundedRating = Math.round(rating || 0);
+    for (let i = 1; i <= 5; i++) {
+      stars.push(
+        i <= roundedRating ? (
+          <FaStar key={i} className="text-yellow-500" />
+        ) : (
+          <FaRegStar key={i} className="text-gray-300" />
+        )
+      );
+    }
+    return stars;
+  };
 
   return (
     <motion.div 
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
-      className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 group flex flex-col border border-transparent hover:border-accent-gold/20"
+      className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 group flex flex-col border border-transparent hover:border-accent-gold/20 animate-fade-in"
     >
       <Link to={`/products/${product.slug || product.id}`} className="block h-72 overflow-hidden relative">
         <img 
@@ -30,8 +46,18 @@ const ProductCard = ({ product }) => {
       
       <div className="p-6 flex flex-col flex-grow bg-white z-10 relative">
         <Link to={`/products/${product.slug || product.id}`}>
-          <h3 className="text-xl font-heading text-primary-dark mb-2 group-hover:text-secondary-brown transition-colors line-clamp-1">{product.name}</h3>
+          <h3 className="text-xl font-heading text-primary-dark mb-1 group-hover:text-secondary-brown transition-colors line-clamp-1">{product.name}</h3>
         </Link>
+
+        {/* Stars rating below name */}
+        <div className="flex items-center gap-1 mb-3">
+          <div className="flex text-yellow-500 text-sm">
+            {renderStars(product.rating)}
+          </div>
+          {product.review_count > 0 && (
+            <span className="text-xs text-text-muted">({product.review_count})</span>
+          )}
+        </div>
         
         <p className="text-sm text-text-muted mb-4 line-clamp-2">{product.description || 'Premium handcrafted solid wood furniture.'}</p>
         
