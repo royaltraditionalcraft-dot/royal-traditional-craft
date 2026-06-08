@@ -16,6 +16,8 @@ import ProductDetails from './pages/ProductDetails';
 
 import Home from './pages/Home';
 import NotFound from './pages/NotFound';
+import ForgotPassword from './pages/ForgotPassword';
+import ResetPassword from './pages/ResetPassword';
 
 function App() {
   return (
@@ -27,6 +29,8 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/products" element={<MainLayout><Products /></MainLayout>} />
             <Route path="/products/:slug" element={<MainLayout><ProductDetails /></MainLayout>} />
             <Route path="/cart" element={<MainLayout><Cart /></MainLayout>} />
